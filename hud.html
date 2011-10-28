@@ -1,0 +1,132 @@
+<div id="meters">
+	<div id="emFrame" class="hud-meter-frame">
+		<div id="emIcon" class="hud-meter-icon energy-icon"></div>
+		<div id="emBox" class="hud-meter-box">
+			<div id="emBar" class="hud-meter-bar">
+				<div id="emReadout" class="hud-meter-readout"></div>
+			</div>
+		</div>
+	</div>
+
+	<div id="rmFrame" class="hud-meter-frame">
+		<div id="rmIcon" class="hud-meter-icon rads-icon"></div>
+		<div id="rmBox" class="hud-meter-box">
+			<div id="rmBar" class="hud-meter-bar">
+				<div id="rmReadout" class="hud-meter-readout"></div>
+			</div>
+		</div>
+	</div>
+
+	<div id="ssFrame" class="hud-meter-frame">
+		<div id="ssIcon" class="hud-meter-icon signal-icon"></div>
+		<div id="ssBox" class="hud-meter-box">
+			<div id="ssBar" class="hud-meter-bar">
+				<div id="ssReadout" class="hud-meter-readout"></div>
+			</div>
+		</div>
+	</div>
+</div>
+
+<div id="monologue">
+	<div id="mono0" class="mono"></div>
+	<div id="mono1" class="mono"></div>
+	<div id="mono2" class="mono"></div>
+	<div id="mono3" class="mono"></div>
+</div>
+
+<div id="intro">
+
+	<div id="intro-titles">FISSURE</div>
+
+	<div class="border pad blackground">
+		<div>
+			<div class="left" style="width:20%; text-align: center">
+				<img src="res/mouse.png">
+			</div>
+			<div class="left" style="width:70%">
+				<br><br>
+				Left-click and drag the mouse cursor to look around.
+			</div>
+		</div>
+
+		<div class="clear space"></div>
+
+		<div>
+			<div class="left" style="width:20%; text-align: center">
+				<table>
+					<tr><td>&nbsp;</td><td class="border">W</td><td>&nbsp;</td></tr>
+					<tr><td class="border">A</td><td class="border">S</td><td class="border">D</td></tr>
+				</table>
+			</div>
+			<div class="left" style="width:70%">
+				Use these keys to fire thrusters.<br>
+				Thrust direction is relative to where you're looking.<br>
+			</div>
+		</div>
+	
+		<div class="clear space"></div>
+
+		<div>
+			<div class="left" style="width:20%; text-align: center">
+				<table>
+					<tr><td>&nbsp;</td><td class="border">Esc</td><td>&nbsp;</td></tr>
+				</table>
+			</div>
+			<div class="left" style="width:70%">
+				Use this key to pause the game and display the help.
+			</div>
+		</div>
+
+		<div class="clear"></div>
+	</div>	
+
+	<div class="space">&nbsp;</div>
+
+	<div class="border pad blackground">
+		<div>Travel through the ashes of the Fissure Base to collect salvage.</div>
+		<div>Use thrusters sparingly. Be patient. Let your momentum do the work.</div>
+		<div>Radiation [<sub><div class="rads-icon"></div></sub>] and collisions with the cave wall drain energy [<sub><div class="energy-icon"></div></sub>].</div>
+		<div>Salvage provides energy [<sub><div class="energy-icon"></div></sub>] and components, and unlocks the story.</div>
+		<div>The EMF detector [<sub><div class="signal-icon"></div></sub>] indicates when you're pointed at a likely find.</div>
+		<div>Fly into a salvage blob to scoop it up. Note that targets may be far away. </div>
+	</div>
+
+	<div class="space clear">&nbsp;</div>
+
+	<div id="intro-box">
+		<div id="intro-bar">
+			<div id="intro-readout"></div>
+		</div>
+	</div>
+	
+	<div id="intro-start-button"><big>PRESS ENTER TO PLAY</big></div>
+	<div id="intro-pause-button"><big>PRESS ESC TO RESUME</big></div>
+
+</div>
+
+<div id="curtain"></div>
+
+<div id="credits">
+	<div id="final-score"></div>
+	<div>&nbsp;</div>
+	<div>FISSURE Created by</div>
+	<div><big>Chris Gauthier</big></div>
+	<div>&nbsp;</div>
+	<small>
+		<div>Inspired by<br><i>The Gold at Starbow's End</i><br>by Frederik Pohl</div>
+	</small>
+	<div>&nbsp;</div>
+	<div>PRESS ENTER TO PLAY AGAIN</div>
+</div>
+
+<div id="scorebox">
+	<div class="left">
+		<div>SALVAGED</div>
+		<div id="progress">0 / 25</div>
+	</div>
+	<div class="left">
+		<div>SCORE</div>
+		<div id="score">0</div>
+	</div>
+</div>
+
