@@ -54,13 +54,16 @@ var FISSURE = new function() {
 
 		FOAM.resources.onComplete = function() {
 
-			FOAM.shaders.build("cave", "vs-cave", "fs-cave", 
+			FOAM.shaders.build("cave", "vs-cave", "fs-cave",
+								["position", "texturec"],
 								["projector", "modelview", "camerapos"], 
 								["tex0"] );
 			FOAM.shaders.build("salvage", "vs-salvage", "fs-salvage", 
+								["position", "texturec"],
 								["projector", "modelview", "rotations", "center", "scale"],
 								["tex0"] );
 			FOAM.shaders.build("cloud", "vs-cloud", "fs-cloud", 
+								["position", "texturec"],
 								["projector", "modelview", "offset"], 
 								["tex0"] );
 

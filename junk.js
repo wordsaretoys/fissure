@@ -11,10 +11,9 @@ FISSURE.buildJunk = function(seed, roughness, detail) {
 	var temp = {
 		norm: new FOAM.Vector()
 	};
-
-	mesh.TEXTURE = 1;
-	mesh.add(mesh.POSITION, 3);
-	mesh.add(mesh.TEXTURE, 2);
+	var program = FOAM.shaders.get("salvage");
+	mesh.add(program.position, 3);
+	mesh.add(program.texturec, 2);
 
 	// prevent "puckered anus" effect at poles
 	var i, il;

@@ -31,14 +31,14 @@ FISSURE.cave = new function() {
 	};
 	
 	this.init = function() {
+		var program;
 		upperMesh = new FOAM.Mesh(FOAM.gl.TRIANGLE_STRIP);
 		lowerMesh = new FOAM.Mesh(FOAM.gl.TRIANGLE_STRIP);
-		upperMesh.TEXTURE = 1;
-		lowerMesh.TEXTURE = 1;
-		upperMesh.add(upperMesh.POSITION, 3);
-		upperMesh.add(upperMesh.TEXTURE, 2);
-		lowerMesh.add(lowerMesh.POSITION, 3);
-		lowerMesh.add(lowerMesh.TEXTURE, 2);
+		program = FOAM.shaders.get("cave");
+		upperMesh.add(program.position, 3);
+		upperMesh.add(program.texturec, 2);
+		lowerMesh.add(program.position, 3);
+		lowerMesh.add(program.texturec, 2);
 		this.generate(FISSURE.player.position);
 		lastRedrawAt.copy(FISSURE.player.position);
 	};

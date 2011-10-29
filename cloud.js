@@ -30,6 +30,7 @@ FISSURE.cloud = new function() {
 	
 		var i, y, mesh;
 		var prng = new FOAM.Prng();
+		var program = FOAM.shaders.get("cloud");
 		for (i = 0; i < cloudCount; i++) {
 		
 			y = Math.round( dbound.y * (i / cloudCount) + lbound.y );
@@ -44,9 +45,8 @@ FISSURE.cloud = new function() {
 
 			mesh = cloud[i].mesh;
 			
-			mesh.TEXTURE = 1;
-			mesh.add(mesh.POSITION, 3);
-			mesh.add(mesh.TEXTURE, 2);
+			mesh.add(program.position, 3);
+			mesh.add(program.texturec, 2);
 
 			mesh.set(lbound.x, y, lbound.z, lbound.x, lbound.z);
 			mesh.set(lbound.x, y, ubound.z, lbound.x, ubound.z);
