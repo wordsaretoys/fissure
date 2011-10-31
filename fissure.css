@@ -189,6 +189,7 @@ div {
 }
 #intro .border {
 	border: 1px solid white;
+	color: white;
 	box-shadow: 0.1em 0.1em 0.2em black;
 }
 #intro .pad {
