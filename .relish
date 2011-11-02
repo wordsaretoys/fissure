@@ -1,0 +1,4 @@
+PROJECT_NAME="fissure"
+RELEASE_PATH="release"
+SUBSTITUTE_PATHS = [ ["/debug", "/home/chris/Code/Current"] ]
+EXCLUDE_PATHS=["/shared"]
