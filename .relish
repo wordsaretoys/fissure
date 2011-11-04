@@ -1,4 +1,5 @@
-PROJECT_NAME="fissure"
-RELEASE_PATH="release"
+PROJECT_NAME = "fissure"
+RELEASE_PATH = "release"
 SUBSTITUTE_PATHS = [ ["/debug", "/home/chris/Code/Current"] ]
-EXCLUDE_PATHS=["/shared"]
+EXCLUDE_PATHS = ["/shared"]
+RESOURCE_PATH = "res"
