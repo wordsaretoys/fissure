@@ -11,6 +11,7 @@
 		<script type="text/javascript" src="/debug/foam/resources.js"></script>
 		<script type="text/javascript" src="/debug/foam/vector.js"></script>
 		<script type="text/javascript" src="/debug/foam/quaternion.js"></script>
+		<script type="text/javascript" src="/debug/foam/thing.js"></script>
 		<script type="text/javascript" src="/debug/foam/shaders.js"></script>
 		<script type="text/javascript" src="/debug/foam/textures.js"></script>
 		<script type="text/javascript" src="/debug/foam/camera.js"></script>
