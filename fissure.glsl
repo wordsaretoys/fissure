@@ -29,9 +29,7 @@ void main(void) {
 	cave fragment shader
 **/
 
-#ifdef GL_ES
-precision highp float;
-#endif
+precision mediump float;
  
 uniform sampler2D tex0;
 
@@ -77,9 +75,7 @@ void main(void) {
 	cloud fragment shader
 **/
 
-#ifdef GL_ES
-precision highp float;
-#endif
+precision mediump float;
  
 uniform sampler2D tex0;
 uniform vec2 offset;
@@ -126,9 +122,7 @@ void main(void) {
 	salvage fragment shader
 **/
 
-#ifdef GL_ES
-precision highp float;
-#endif
+precision mediump float;
  
 uniform sampler2D tex0;
 
