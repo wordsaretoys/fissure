@@ -32,7 +32,7 @@
 include("fissure.glsl");
 ?>
 		<script type="text/javascript">
-			window.addEventListener("load", function() {
+			jQuery(window).bind("load", function() {
 				FISSURE.init();
 			});
 		</script>
