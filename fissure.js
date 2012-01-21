@@ -1,20 +1,36 @@
 /**
 
-	Fissure Main Object
-
-	requires Foam library
+	Fissure: WebGL-based Game
+	
+	@module fissure
+	@author cpgauthier
 
 **/
 
 var FISSURE = new function() {
 
+	/**
+		update all game objects that require it
+		
+		execute on every animation frame
+		
+		@method update
+	**/
+
 	this.update = function() {
 		FISSURE.world.update();
 		FISSURE.player.update();
 		FISSURE.cave.update();
-		FISSURE.hud.update();
 		FISSURE.salvage.update();
 	};
+
+	/**
+		draw all drawable objects
+		
+		execute on every animation frame
+		
+		@method draw
+	**/
 
 	this.draw = function() {
 		var gl = FOAM.gl;
@@ -26,6 +42,12 @@ var FISSURE = new function() {
 		FISSURE.salvage.draw();
 		FISSURE.cloud.draw();
 	};
+
+	/**
+		initialize FOAM library and game objects, load resources
+
+		@method init
+	**/
 
 	this.init = function() {
 		// initialize the Foam API
@@ -48,12 +70,15 @@ var FISSURE = new function() {
 		FOAM.resources.addImage("noise", "res/noise.png");
 		FOAM.resources.addImage("junk", "res/junk.png");
 		
+		// set up event handler to execute once for every resource loaded
 		FOAM.resources.onLoad = function(count, total) {
 			FISSURE.hud.advanceIntro(count, total);
 		};
 
+		// set up event handler to execute once loading complete
 		FOAM.resources.onComplete = function() {
 
+			// compile and link all shaders
 			FOAM.shaders.build("cave", "vs-cave", "fs-cave",
 								["position", "texturec"],
 								["projector", "modelview", "camerapos"], 
@@ -67,6 +92,7 @@ var FISSURE = new function() {
 								["projector", "modelview", "offset"], 
 								["tex0"] );
 
+			// compile textures from loaded images
 			FOAM.textures.buildFromSprite("cloud-noise", "noise", 0, 0, 256, 256);
 			FOAM.textures.buildFromSprite("cave-noise", "noise", 256, 0, 256, 256);
 			FOAM.textures.buildFromSprite("junk0", "junk", 0, 0, 64, 64);
@@ -78,6 +104,7 @@ var FISSURE = new function() {
 			FISSURE.salvage.init();
 			FISSURE.cloud.init();
 			
+			// set up event handler to execute when player starts game
 			FISSURE.hud.completeIntro( function() {
 
 				FISSURE.start();
@@ -95,6 +122,12 @@ var FISSURE = new function() {
 		FOAM.resources.load();
 	};
 	
+	/**
+		(re)start game by (re)setting game state to intial conditions
+
+		@method start
+	**/
+
 	this.start = function() {
 		FISSURE.hud.start();
 		FISSURE.world.start();

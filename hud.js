@@ -1,13 +1,23 @@
 /**
+	handle heads-up display and general ui functions
 
-	HUD Object
-
+	@namespace FISSURE
+	@class hud
 **/
 
 FISSURE.hud = new function() {
 
-	// jQuery's fader doesn't use our timebase
-	// animation must pause when the game does
+	/**
+		provides a fader for UI elements that works
+		on the same timebase as the rest of the code
+		
+		jQuery's fader uses its own timebase, so its
+		animations won't reliably pause when mine do
+
+		@param e jQuery element to fade
+		@method Fader
+
+	**/
 	var Fader = function(e) {
 		var element = e;
 		var time = 0;
@@ -15,6 +25,15 @@ FISSURE.hud = new function() {
 		var direction = 0;
 		var callback = null;
 		var nof = function() {};
+
+		/**
+			start fading the element in
+		
+			@param p time period for fade
+			@param f function to call when fade completed
+			@method fadeIn
+		**/
+		
 		this.fadeIn = function(p, f) {
 			period = p;
 			time = period;
@@ -22,6 +41,15 @@ FISSURE.hud = new function() {
 			element.css("opacity", "0");
 			callback = f || nof;
 		};
+
+		/**
+			start fading the element out
+	
+			@param p time period for fade
+			@param f function to call when fade completed
+			@method fadeOut
+		**/
+		
 		this.fadeOut = function(p, f) {
 			period = p;
 			time = period;
@@ -29,12 +57,29 @@ FISSURE.hud = new function() {
 			element.css("opacity", "1");
 			callback = f || nof;
 		};
+
+		/**
+			simple delay: wait, then call a function
+		
+			@param p time period to delay
+			@param f function to call when delay over
+			@method delay
+		**/
+		
 		this.delay = function(p, f) {
 			period = p;
 			time = period;
 			direction = 0;
 			callback = f || nof;
 		};
+
+		/**
+			called by the FOAM framework to update the fader
+			do not call in user code
+		
+			@method update
+		**/
+		
 		this.update = function() {
 			var op;
 			if (time > 0) {
@@ -49,6 +94,9 @@ FISSURE.hud = new function() {
 					callback();
 			}
 		};
+
+		// schedule the update
+		FOAM.schedule(this.update, 0, true);
 	};
 
 	var MLFadeInTime = 500;
@@ -60,6 +108,14 @@ FISSURE.hud = new function() {
 	var dom, fader;
 	
 	this.monologuing = false;
+	
+	/**
+		establish jQuery shells around UI DOM objects &
+		assign methods for simple behaviors like size &
+		initialize meters
+		
+		@method init
+	**/
 	
 	this.init = function() {
 
@@ -125,22 +181,33 @@ FISSURE.hud = new function() {
 		
 		dom.meters.hide();
 		dom.scorebox.hide();
-		
-		jQuery("#help").bind("click", function() {
-			FISSURE.hud.togglePause();
-		} );
-
-//		FOAM.schedule(this.showDebug, 25, true);
 	};
 	
+	/**
+		insure meters and scores are shown at game start
+		
+		@method start
+	**/
+
 	this.start = function() {
 		dom.meters.show();
 		dom.scorebox.show();
 	};
 
+	/**
+		set the level to display in the energy meter
+		
+		@param energy current player energy
+		@param total maximum player energy
+		@method setEnergy
+	**/
+
 	this.setEnergy = function(energy, total) {
 		var pc = Math.round(100 * energy / total);
-		dom.emReadout.html( energy + "&nbsp;" );
+		dom.emReadout.html( energy );
+
+		// display energy bar as red, yellow, or green
+		// depending how critical the energy level is
 		if (pc > 25)
 			dom.emBar.css("backgroundColor", "#090");
 		else if (pc > 10)
@@ -150,14 +217,27 @@ FISSURE.hud = new function() {
 		dom.emBar.width( pc + "%" );
 	};
 
+	/**
+		set the level to display in the radiation meter
+		
+		@param rads ambient radiation level
+		@param total maximum displayable radiation level
+		@method setRads
+	**/
+
 	this.setRads = function(rads, total) {
 		var pc, rd = "";
+
+		// cap ambient rads at total and append "+" if it exceeds
 		if (rads > total) {
 			rd = "+";
 			rads = total;
 		}
-		dom.rmReadout.html( rads + rd + "&nbsp;" );
+		dom.rmReadout.html( rads + rd );
 		pc = Math.round(100 * rads / total);
+		
+		// display rads bar as green, yellow, red
+		// depending on how critical rad level is
 		if (pc <= 50)
 			dom.rmBar.css("backgroundColor", "#090");
 		else if (pc > 50 && pc <= 75)
@@ -167,25 +247,59 @@ FISSURE.hud = new function() {
 		dom.rmBar.width( pc + "%" );
 	};
 
+	/**
+		set the level to display in the signal meter
+		
+		@param level current signal level
+		@param maxLevel maximum displayable signal level
+		@method setSignal
+	**/
+
 	this.setSignal = function(level, maxLevel) {
 		var pc, rd = "";
+
+		// cap signal level at total and append "+" if it exceeds
 		if (level > maxLevel) {
 			rd = "+";
 			level = maxLevel;
 		}
 		pc = Math.round(100 * level / maxLevel);
-		dom.ssReadout.html( pc + rd + "&nbsp;" );
+		dom.ssReadout.html( pc + rd );
 		dom.ssBar.css("backgroundColor", "#090");
 		dom.ssBar.width( pc + "%" );
 	};
 	
+	/**
+		set the score to display
+		
+		@param score current score
+		@method setScore
+	**/
+
 	this.setScore = function(score) {
 		dom.score.html(score);
 	};
 	
+	/**
+		set progress level (items collected) to display
+		
+		@param items number of items collected
+		@param maxItems number of items in game
+		@method setProgress
+	**/
+
 	this.setProgress = function(items, maxItems) {
 		dom.progress.html(items + " / " + maxItems);
 	};
+
+	/**
+		adjust UI elements in response to browser window resize
+
+		some elements are attached to the edges via CSS, and do
+		not require manual resizing or recentering
+		
+		@method resize
+	**/
 
 	this.resize = function() {
 		dom.hud.width(FOAM.width);
@@ -202,21 +316,16 @@ FISSURE.hud = new function() {
 			left: (FOAM.width - dom.credits.width()) / 2 } );
 	};
 
-	function chop(n, d) {
-		var p10 = Math.pow(10, d);
-		return Math.round(n * p10) / p10;
-	}
-
-	this.showDebug = function() {
-		var pos = FISSURE.player.position;
-		var vel = FISSURE.player.velocity;
-
-		var s = ""
-		s += "fps: " + FOAM.fps + "<br>";
-		s += "position: ( " + chop(pos.x, 3) + ", " + chop(pos.y, 3) + ", " + chop(pos.z, 3) + " )<br>";
-		s += "velocity: ( " + chop(vel.x, 3) + ", " + chop(vel.y, 3) + ", " + chop(vel.z, 3) + " )<br>";
-		jQuery("#debug").html(s);
-	};
+	/**
+		handle a keypress
+		
+		note that the hud object only handles keys related to 
+		HUD activity. see player.js for motion control keys
+		
+		@method onKeyDown
+		@param event browser object containing event information
+		@return true to enable default key behavior
+	**/
 
 	this.onKeyDown = function(event) {
 		switch(event.keyCode) {
@@ -228,6 +337,15 @@ FISSURE.hud = new function() {
 				break;
 		}
 	};
+
+	/**
+		toggle between running and non-running game states
+		
+		non-running means put up the "pause curtain" to darken scene,
+		stop the FOAM engine, and put up the instructions/game intro
+		
+		@method togglePause
+	**/
 
 	this.togglePause = function() {
 		if (canPause) {
@@ -245,13 +363,17 @@ FISSURE.hud = new function() {
 		}
 	};
 	
-	this.update = function() {
-		var i, il;
-		for (i = 0, il = fader.mono.length; i < il; i++)
-			fader.mono[i].update();
-		fader.curtain.update();
-	};
-	
+	/**
+		display a particular monologue on screen
+		
+		monologues are faded in one line at a time, then after a
+		delay, they are faded out one line at a time. each line
+		is responsible for kicking off the one immediately below
+		
+		@param id monologue to display
+		@method showMonologue
+	**/
+
 	this.showMonologue = function(id) {
 		var text = FISSURE.monologue.getText(id);
 		var fade1, fade2, fade3;
@@ -264,7 +386,8 @@ FISSURE.hud = new function() {
 			dom.mono[i].html(text[i]);
 		}
 
-		// each line fades in once the one above it is finished fading in
+		// set up fade pattern for the LAST line of the monologue
+		// fade in -> delay -> fade out
 		fade3 = function () {
 			fader.mono[3].fadeIn(MLFadeInTime, function() {
 				fader.mono[3].delay(MLDisplayTime, function() {
@@ -275,6 +398,8 @@ FISSURE.hud = new function() {
 			} );
 		};
 
+		// set up fade pattern for the 3RD line of monologue
+		// fade in -> start LAST line pattern, delay -> fade out
 		fade2 = function () {
 			fader.mono[2].fadeIn(MLFadeInTime, function() {
 				fade3();
@@ -284,6 +409,8 @@ FISSURE.hud = new function() {
 			} );
 		};
 
+		// set up fade pattern for the 2ND line of monologue
+		// fade in -> start 3RD line pattern, delay -> fade out
 		fade1 = function () {
 			fader.mono[1].fadeIn(MLFadeInTime, function() {
 				fade2();
@@ -293,6 +420,8 @@ FISSURE.hud = new function() {
 			} );
 		};
 
+		// set up fade pattern for the FIRST line of monologue
+		// fade in -> start 2ND line pattern, delay -> fade out
 		fader.mono[0].fadeIn(MLFadeInTime, function() {
 			fade1();
 			fader.mono[0].delay(MLDisplayTime, function() {
@@ -301,24 +430,60 @@ FISSURE.hud = new function() {
 		} );
 	};
 	
+	/**
+		fades in the pause curtain
+		
+		@param callback method to call after curtain down
+		@method curtainDown
+	**/
+
 	this.curtainDown = function(callback) {
 		fader.curtain.fadeIn(CurtainTime, callback);
 	};
 	
+	/**
+		fades out the pause curtain
+		
+		@param callback method to call after curtain up
+		@method curtainUp
+	**/
+
 	this.curtainUp = function(callback) {
 		fader.curtain.fadeOut(CurtainTime, callback);
 	};
+
+	/**
+		displays the intro/help screen
+		
+		@method showIntro
+	**/
 
 	this.showIntro = function() {
 		dom.intro.css("visibility", "visible");
 	};
 	
+	/**
+		advances the progress meter on the intro/help screen
+		
+		@param count how many resources have been loaded
+		@param total total numbers of resources to load
+		@method advanceIntro
+	**/
+
 	this.advanceIntro = function(count, total) {
 		var pc = Math.round(100 * count / total) + "%";
 		dom.introReadout.html(pc);
 		dom.introBar.width(pc);
 	};
 	
+	/**
+		indicates that resource load is complete and
+		prompts user to press Enter to start game
+		
+		@param f method to call when player presses Enter
+		@method completeIntro
+	**/
+
 	this.completeIntro = function(f) {
 		var handler;
 		dom.introBox.hide();
@@ -330,7 +495,7 @@ FISSURE.hud = new function() {
 				dom.introStart.hide();
 				dom.introPause.show();
 				dom.intro.css("visibility", "hidden");
-				FISSURE.hud.enablePause();
+				canPause = true;
 				f();
 			}
 		};
@@ -338,6 +503,13 @@ FISSURE.hud = new function() {
 		jQuery(window).bind("keydown", handler);
 	};
 	
+	/**
+		displays the game credits and gives player option of replay
+		
+		@param f method to call if player chooses replay
+		@method showCredits
+	**/
+
 	this.showCredits = function(f) {
 		var handler;
 		dom.meters.hide();
@@ -345,28 +517,18 @@ FISSURE.hud = new function() {
 
 		dom.creditScore.html("FINAL SCORE: " + FISSURE.player.score);
 		dom.credits.css("visibility", "visible");
-		this.disablePause();
+		canPause = false;
 	
 		handler = function(event) {
 			if (FOAM.KEY.ENTER == event.keyCode) {
 				jQuery(window).unbind("keydown", handler);
 				dom.credits.css("visibility", "hidden");
-				FISSURE.hud.enablePause();
+				canPause = true;
 				f();
 			}
 		};
 		jQuery(window).bind("keydown", handler);
 
 	};
-	
-	this.enablePause = function() {
-		canPause = true;
-		jQuery("#help-block").show();
-	};
-	
-	this.disablePause = function() {
-		canPause = false;
-		jQuery("#help-block").hide();
-	};
-	
+
 };

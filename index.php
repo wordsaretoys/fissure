@@ -5,7 +5,7 @@
 		<title>Fissure</title>
 		<link rel="stylesheet" type="text/css" media="screen" href="fissure.css">
 		<link rel="stylesheet" type="text/css" media="screen" href="/shared/toybox.css">
-		<script type="text/javascript" src="/shared/jquery-1.6.2.js"></script>
+		<script type="text/javascript" src="/shared/jquery-1.7.1.js"></script>
 
 		<script type="text/javascript" src="/debug/foam/foam.js"></script>
 		<script type="text/javascript" src="/debug/foam/resources.js"></script>

@@ -12,7 +12,7 @@ FISSURE.world = new function() {
 		pos: new FOAM.Vector(),
 		vel: new FOAM.Vector(),
 		norm: new FOAM.Vector(),
-		test: { collide: false, normal: new FOAM.Vector() }
+		coll: new FOAM.Vector()
 	};
 
 	//
@@ -52,9 +52,7 @@ FISSURE.world = new function() {
 		temp.vel.copy(FISSURE.player.velocity).mul(dt);
 		temp.pos.copy(FISSURE.player.position).add(temp.vel);
 
-		FISSURE.cave.testWallCollision(temp.pos, FISSURE.player.capsule.radius, temp.test);
-		if (temp.test.collide) {
-			temp.norm.copy(temp.test.normal);
+		if (FISSURE.cave.testWallCollision(temp.pos, FISSURE.player.capsule.radius, temp.norm)) {
 			temp.vel.copy(FISSURE.player.velocity);
 
 			FISSURE.player.velocity.sub(temp.norm.mul( 2 * temp.norm.dot(temp.vel) )).mul(0.5);
