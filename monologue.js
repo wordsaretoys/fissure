@@ -1,10 +1,19 @@
 /**
+	store and retrieve monologues text
 
-	Monologue Object
-
+	@namespace FISSURE
+	@class monologue
 **/
 
 FISSURE.monologue = new function() {
+
+	/**
+		retrieve a monologue
+		
+		@method getText
+		@param id the id of the monologue
+		@return the text of the monologue
+	**/
 
 	this.getText = function(id) {
 		var i, il;

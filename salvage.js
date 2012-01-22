@@ -1,7 +1,14 @@
 /**
+	maintain collection of salvage objects
 
-	Salvage Manager Object
+	this object was originally written with the intent
+	that the salvage would be randomly distributed on
+	each playthrough, but late in development I caught
+	on that it would make score comparison meaningless.
+	so, there's a little cruft left over from that.
 
+	@namespace FISSURE
+	@class salvage
 **/
 
 FISSURE.salvage = new function() {
@@ -14,33 +21,24 @@ FISSURE.salvage = new function() {
 	this.map = [];
 	
 	var temp = {
-		camarray: new Float32Array(3),
+		center: new Float32Array(3),
 		front: new FOAM.Vector(),
 		bline: new FOAM.Vector()
 	};
 
-	this.findClosest = function() {
-		var p = FISSURE.player.position;
-		var i, d, maxd, lasti;
-		for (i = 0, maxd = FISSURE.world.radius * 2; i < itemCount; i++) {
-			d = p.distance(this.map[i].center);
-			if (d < maxd && this.map[i].active) {
-				maxd = d;
-				lasti = i;
-			}
-		}
-		return this.map[lasti];
-	};
-	
+	/**
+		create the salvage collection
+		
+		@method init
+	**/
+
 	this.init = function() {
 	
-		var i, il, q;
+		var i, il;
 		
 		for (i = 0; i < itemCount; i++) {
-			q = new FOAM.Vector();
 			this.map.push( {
-				center: q,
-				monologue: "salv" + (i + 1),
+				center: new FOAM.Vector(),
 				active: false,
 				model: null,
 				texture: 0
@@ -48,6 +46,12 @@ FISSURE.salvage = new function() {
 		}
 	};
 	
+	/**
+		assign locations to all salvage objects
+		
+		@method start
+	**/
+
 	this.start = function() {
 
 		var prng = new FOAM.Prng(199802);
@@ -58,19 +62,21 @@ FISSURE.salvage = new function() {
 		var i, j, il, jl, b, item;
 		for (i = 0; i < itemCount; ) {
 
-			// we're effectively assigning random points on a known grid
-			// to maintain a minimum separation between salvage locations
+			// pick a random *discrete* point on the XZ plane
+			// to minimize separation between salvage locations
 			p.x = minDistance * Math.round((c.x + prng.getm(r)) / minDistance);
 			p.y = 0;
 			p.z = minDistance * Math.round((c.z + prng.getm(r)) / minDistance);
 			
-			// check for duplicates on the grid
+			// insure we haven't duplicated an existing location
 			for (j = 0, jl = i, b = false; j < jl; j++)
 				if (this.map[j].center.distance(p) < minDistance) {
 					b = true;
 					break;
 				}
 
+			// if we haven't, add the location to the collection
+			// and pick out a texture for it; go to next object
 			if (!(b || p.distance(c) < minDistance)) {
 				p.copy(FISSURE.cave.midpoint(p.x, p.z));
 				item = this.map[i++];
@@ -81,6 +87,15 @@ FISSURE.salvage = new function() {
 		}
 	};
 	
+	/**
+		handles salvage state changes in response to player
+		
+		actual model meshes are generated "just in time"
+		(probably wouldn't do this again; no real savings)
+		
+		@method update
+	**/
+
 	this.update = function() {
 
 		temp.front.copy(FOAM.camera.orientation.front);
@@ -93,8 +108,9 @@ FISSURE.salvage = new function() {
 			if (this.map[i].active) {
 				item = this.map[i];
 				d = item.center.distance(FISSURE.player.position);
-				
-				// test to see if we need to create the model JIT
+
+				// if player is within visual distance of model and
+				// it doesn't exist yet, create it				
 				if (d <= minDistance && item.model == null)
 					item.model = FISSURE.buildJunk(t + i, 6, 3)
 
@@ -105,8 +121,8 @@ FISSURE.salvage = new function() {
 					item.active = false;
 				}
 			
-				// dot product related to vector alignment
-				// provides rough signal strength measure
+				// calculate a total "signal strength" for all salvage objects
+				// the dot product measures vector alignment -> rough measure
 				temp.bline.copy(FISSURE.player.position).sub(item.center).norm();
 				dp = temp.bline.dot(temp.front);
 				if (dp > 0) {
@@ -122,6 +138,12 @@ FISSURE.salvage = new function() {
 		FISSURE.hud.setSignal(ss, FISSURE.player.capsule.detectorRange);
 	};
 	
+	/**
+		draws all salvage objects the player can see
+		
+		@method draw
+	**/
+
 	this.draw = function() {
 
 		var i, il, item, d;
@@ -132,16 +154,13 @@ FISSURE.salvage = new function() {
 		gl.uniformMatrix4fv(program.projector, false, camera.projector());
 		gl.uniformMatrix4fv(program.modelview, false, camera.modelview());
 		gl.uniform1f(program.scale, junkRadius);
-		FOAM.textures.bind(0, program.junk0, "junk0");
-		FOAM.textures.bind(1, program.junk1, "junk1");
-		FOAM.textures.bind(2, program.junk2, "junk2");
 
 		for(i = 0, il = this.map.length; i < il; i++) {
 			item = this.map[i];
 			if (item.active && item.model != null && 
 				item.center.distance(FISSURE.player.position) < drawDistance) {
 				FOAM.textures.bind(0, program.tex0, "junk" + item.texture);
-				gl.uniform3fv(program.center, item.center.toArray(temp.camarray));
+				gl.uniform3fv(program.center, item.center.toArray(temp.center));
 				item.model.draw();
 			}
 		}

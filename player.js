@@ -1,7 +1,8 @@
 /**
+	maintain player state
 
-	Player object
-
+	@namespace FISSURE
+	@class player
 **/
 
 FISSURE.player = new function() {
@@ -18,6 +19,7 @@ FISSURE.player = new function() {
 		maxEnergy: 1000,
 		detectorRange: 0.000001
 	};
+	this.capsule = capsule;
 
 	var motion = { 
 		moveleft: false, moveright: false, movefore: false, moveback: false
@@ -45,6 +47,12 @@ FISSURE.player = new function() {
 		pos: new FOAM.Vector()
 	};
 	
+	/**
+		set up event handlers for player controls
+		
+		@method init
+	**/
+
 	this.init = function() {
 		jQuery(window).bind("keydown", this.onKeyDown);
 		jQuery(window).bind("keyup", this.onKeyUp);
@@ -54,6 +62,12 @@ FISSURE.player = new function() {
 		FOAM.camera.farLimit = 2000.0;
 	};
 	
+	/**
+		reset player state after death
+		
+		@method retry
+	**/
+
 	this.retry = function() {
 		this.energy = capsule.maxEnergy;
 		this.velocity.set(0, 0, -1);
@@ -71,11 +85,26 @@ FISSURE.player = new function() {
 		FISSURE.hud.setProgress(this.progress, FISSURE.salvage.map.length);
 	}
 	
+	/**
+		(re)set player state and score
+		
+		@method start
+	**/
+
 	this.start = function() {
 		this.progress = 0;
 		this.score = 0;
 		this.retry();
 	};
+
+	/**
+		react to player controls by updating velocity and position
+		handle energy consumption
+		
+		called on every animation frame
+		
+		@method update
+	**/
 
 	this.update = function() {
 		var dt = FOAM.interval * 0.001;
@@ -113,9 +142,25 @@ FISSURE.player = new function() {
 		FISSURE.hud.setEnergy(Math.floor(this.energy), capsule.maxEnergy);
 	};
 	
+	/**
+		add or remove energy from the player state
+		
+		finding salvage increases energy. colliding with the cave
+		and firing thrusters decreases it.
+		
+		@method changeEnergy
+		@param de change in energy
+	**/
+
 	this.changeEnergy = function(de) {
 		this.energy = Math.max(0, Math.min(this.energy + de, capsule.maxEnergy));
 	};
+
+	/**
+		reward player for finding salvage
+		
+		@method salvage
+	**/
 
 	this.salvage = function() {
 		this.progress++;
@@ -124,6 +169,14 @@ FISSURE.player = new function() {
 		FISSURE.hud.setScore(this.score);
 		FISSURE.hud.setProgress(this.progress, FISSURE.salvage.map.length);
 	};
+
+	/**
+		handle a keypress
+		
+		@method onKeyDown
+		@param event browser object containing event information
+		@return true to enable default key behavior
+	**/
 
 	this.onKeyDown = function(event) {
 		switch(event.keyCode) {
@@ -140,23 +193,19 @@ FISSURE.player = new function() {
 			case FOAM.KEY.D:
 				motion.moveright = true;
 				break;
-/*
-
-	Cheat/Testing codes for removed for release
-			
-			case FOAM.KEY.X:
-				FISSURE.player.velocity.set(0, 0, 0);
-				break;
-			case FOAM.KEY.R:
-				temp.pos.copy(FISSURE.salvage.findClosest().center);
-				temp.pos.z += 10;
-				FISSURE.player.position.copy(temp.pos);
-*/
 			default:
 				//window.alert(event.keyCode);
 				break;
 		}
 	};
+
+	/**
+		handle a key release
+		
+		@method onKeyUp
+		@param event browser object containing event information
+		@return true to enable default key behavior
+	**/
 
 	this.onKeyUp = function(event) {
 		switch(event.keyCode) {
@@ -178,15 +227,39 @@ FISSURE.player = new function() {
 		}
 	};
 
+	/**
+		handle a mouse down event
+		
+		@method onMouseDown
+		@param event browser object containing event information
+		@return true to enable default mouse behavior
+	**/
+
 	this.onMouseDown = function(event) {
 		mouse.down = true;
 		return false;
 	};
 	
+	/**
+		handle a mouse up event
+		
+		@method onMouseUp
+		@param event browser object containing event information
+		@return true to enable default mouse behavior
+	**/
+
 	this.onMouseUp = function(event) {
 		mouse.down = false;
 		return false;
 	};
+
+	/**
+		handle a mouse move event
+		
+		@method onMouseMove
+		@param event browser object containing event information
+		@return true to enable default mouse behavior
+	**/
 
 	this.onMouseMove = function(event) {
 		var dx, dy;
@@ -199,7 +272,5 @@ FISSURE.player = new function() {
 		mouse.y = event.pageY;
 		return false;
 	};
-	
-	this.capsule = capsule;
 };
 

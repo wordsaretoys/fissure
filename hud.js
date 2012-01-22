@@ -29,9 +29,9 @@ FISSURE.hud = new function() {
 		/**
 			start fading the element in
 		
+			@method fadeIn
 			@param p time period for fade
 			@param f function to call when fade completed
-			@method fadeIn
 		**/
 		
 		this.fadeIn = function(p, f) {
@@ -45,9 +45,9 @@ FISSURE.hud = new function() {
 		/**
 			start fading the element out
 	
+			@method fadeOut
 			@param p time period for fade
 			@param f function to call when fade completed
-			@method fadeOut
 		**/
 		
 		this.fadeOut = function(p, f) {
@@ -61,9 +61,9 @@ FISSURE.hud = new function() {
 		/**
 			simple delay: wait, then call a function
 		
+			@method delay
 			@param p time period to delay
 			@param f function to call when delay over
-			@method delay
 		**/
 		
 		this.delay = function(p, f) {
@@ -197,9 +197,9 @@ FISSURE.hud = new function() {
 	/**
 		set the level to display in the energy meter
 		
+		@method setEnergy
 		@param energy current player energy
 		@param total maximum player energy
-		@method setEnergy
 	**/
 
 	this.setEnergy = function(energy, total) {
@@ -220,9 +220,9 @@ FISSURE.hud = new function() {
 	/**
 		set the level to display in the radiation meter
 		
+		@method setRads
 		@param rads ambient radiation level
 		@param total maximum displayable radiation level
-		@method setRads
 	**/
 
 	this.setRads = function(rads, total) {
@@ -250,9 +250,9 @@ FISSURE.hud = new function() {
 	/**
 		set the level to display in the signal meter
 		
+		@method setSignal
 		@param level current signal level
 		@param maxLevel maximum displayable signal level
-		@method setSignal
 	**/
 
 	this.setSignal = function(level, maxLevel) {
@@ -272,8 +272,8 @@ FISSURE.hud = new function() {
 	/**
 		set the score to display
 		
-		@param score current score
 		@method setScore
+		@param score current score
 	**/
 
 	this.setScore = function(score) {
@@ -283,9 +283,9 @@ FISSURE.hud = new function() {
 	/**
 		set progress level (items collected) to display
 		
+		@method setProgress
 		@param items number of items collected
 		@param maxItems number of items in game
-		@method setProgress
 	**/
 
 	this.setProgress = function(items, maxItems) {
@@ -370,8 +370,8 @@ FISSURE.hud = new function() {
 		delay, they are faded out one line at a time. each line
 		is responsible for kicking off the one immediately below
 		
-		@param id monologue to display
 		@method showMonologue
+		@param id monologue to display
 	**/
 
 	this.showMonologue = function(id) {
@@ -433,8 +433,8 @@ FISSURE.hud = new function() {
 	/**
 		fades in the pause curtain
 		
-		@param callback method to call after curtain down
 		@method curtainDown
+		@param callback method to call after curtain down
 	**/
 
 	this.curtainDown = function(callback) {
@@ -444,8 +444,8 @@ FISSURE.hud = new function() {
 	/**
 		fades out the pause curtain
 		
-		@param callback method to call after curtain up
 		@method curtainUp
+		@param callback method to call after curtain up
 	**/
 
 	this.curtainUp = function(callback) {
@@ -465,9 +465,9 @@ FISSURE.hud = new function() {
 	/**
 		advances the progress meter on the intro/help screen
 		
+		@method advanceIntro
 		@param count how many resources have been loaded
 		@param total total numbers of resources to load
-		@method advanceIntro
 	**/
 
 	this.advanceIntro = function(count, total) {
@@ -480,8 +480,8 @@ FISSURE.hud = new function() {
 		indicates that resource load is complete and
 		prompts user to press Enter to start game
 		
-		@param f method to call when player presses Enter
 		@method completeIntro
+		@param f method to call when player presses Enter
 	**/
 
 	this.completeIntro = function(f) {
@@ -506,8 +506,8 @@ FISSURE.hud = new function() {
 	/**
 		displays the game credits and gives player option of replay
 		
-		@param f method to call if player chooses replay
 		@method showCredits
+		@param f method to call if player chooses replay
 	**/
 
 	this.showCredits = function(f) {

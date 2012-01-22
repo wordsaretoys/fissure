@@ -1,7 +1,12 @@
 /**
+	generate salvage mesh
 
-	Junk Factory function
-
+	@namespace FISSURE
+	@method buildJunk
+	@param seed noise function seed
+	@param roughness measure of how bumpy the model is
+	@param detail measure of how detailed the model is
+	@return mesh containing salvage model
 **/
 
 FISSURE.buildJunk = function(seed, roughness, detail) {
@@ -19,17 +24,47 @@ FISSURE.buildJunk = function(seed, roughness, detail) {
 	var i, il;
 	for (i = 0, il = noise.map.length; i < il; i++)
 		noise.map[0][i] = 0.5;
+	
+	/**
+		calculate the surface of the salvage model
+		
+		points supplied to this function should be roughly coincident
+		with a sphere of a consistent radius centered around (0, 0, 0)
+
+		@method surface
+		@param p point to calculate surface
+		@return point defining surface
+	**/
 
 	function surface(p) {
 		var sx, sy, d;
+		// normalize the point into a unit vector pointing
+		// away from the center of a sphere at (0, 0, 0)
 		temp.norm.copy(p).norm();
+		// calculate mock "surface coordinates" based on that sphere
 		sx = Math.acos(temp.norm.z) / Math.PI;
 		sy = Math.atan2(temp.norm.y, temp.norm.x) / (Math.PI * 2);
 		// avoid discontinuity in arctangent when we cross x-axis
 		sy = (temp.norm.y < 0) ? sy + 1 : sy;
+		// use the noise function to modulate the unit vector
 		d = 1.0 + noise.get(sx, sy) - noise.amplitude * 0.5;
 		return temp.norm.mul(d);
 	}
+
+	/**
+		recursively generate surface vertexes by subdividing triangles
+		
+		operates on mesh defined in closure
+
+		@method subdivide
+		@param level integer level of detail
+		@param p0 point denoting corner of triangle
+		@param p1 point denoting corner of triangle
+		@param p2 point denoting corner of triangle
+		@param t0 texture coordinates of p0
+		@param t1 texture coordinates of p1
+		@param t2 texture coordinates of p2
+	**/
 
 	function subdivide(level, p0, p1, p2, t0, t1, t2) {
 		var p3 = new FOAM.Vector(), 
@@ -40,7 +75,9 @@ FISSURE.buildJunk = function(seed, roughness, detail) {
 			t5 = new FOAM.Vector(),
 			s;
 
-		if (0 == level) {
+		// if our triangles are small enough, 
+		// shift them into position and exit
+		if (0 === level) {
 			s = surface(p0);
 			mesh.set(s.x, s.y, s.z, t0.x, t0.y);
 			s = surface(p1);
@@ -49,6 +86,8 @@ FISSURE.buildJunk = function(seed, roughness, detail) {
 			mesh.set(s.x, s.y, s.z, t2.x, t2.y);
 			return;
 		}
+		
+		// determine points to define 4 smaller triangles
 		p3.copy(p0).add(p1).mul(0.5);
 		p4.copy(p1).add(p2).mul(0.5);
 		p5.copy(p2).add(p0).mul(0.5);
@@ -59,6 +98,7 @@ FISSURE.buildJunk = function(seed, roughness, detail) {
 
 		level--;
 	
+		// recurse into the new triangles
 		subdivide(level, p0, p3, p5, t0, t3, t5);
 		subdivide(level, p3, p1, p4, t3, t1, t4);
 		subdivide(level, p5, p4, p2, t5, t4, t2);
